@@ -1,6 +1,7 @@
 # Nutrition App
 
 Credits:
+API used for nutrition information -
 Nutritionix - Nutrition Database
 
 FREE
