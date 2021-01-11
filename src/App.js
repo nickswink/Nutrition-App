@@ -1,7 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-
+import Table from './components/Table';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import SearchIcon from '@material-ui/icons/Search';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { ListItemText } from '@material-ui/core';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import AddIcon from "@material-ui/icons/Add";
+import Input from '@material-ui/core/Input';
 const App = () => {
+  const classes = useStyles();
+
   const [query, setQuery] = useState('');
   const [result, setResult] = useState('');
   const [foodLog, setFoodLog] = useState(JSON.parse(localStorage.getItem('foodLog')) || []);
@@ -69,71 +85,81 @@ const App = () => {
   return (
     <div>
       <h1>Nutrition App</h1>
-      <input type="text" value={query} onChange={(e) => { setQuery(e.target.value); }} placeholder="Enter food" />
-      <button type="submit" onClick={handleSubmit}>Submit</button>
-      <h2><u>Results</u></h2>
+      <Paper elevation={2} className={classes.paper}>
+        <form className={classes.inputForm}>
+          <TextField id="foodQuery" label="Food" value={query} onChange={(e) => { setQuery(e.target.value); }} />
+          {/* <input type="text" value={query} onChange={(e) => { setQuery(e.target.value); }} placeholder="Enter food" /> */}
+          <Button variant="contained" color="primary" onClick={handleSubmit}><SearchIcon /></Button>
+          {/* <button type="submit" onClick={handleSubmit}>Submit</button> */}
+        </form>
 
-      <form onSubmit={handleAddItem}>
-        <select name="foodItem">
-          {
-            (result === '')
-              ?
-              <option value="0">Food dropdown here...</option>
-              :
-              result.hits.map((item) => {
-                const { fields: { item_id, item_name, brand_name, nf_calories } } = item;
-                return (<option key={item_id} value={item_id}>{item_name}, {brand_name}, {nf_calories} calories</option>);
-              })
-          }
-        </select>
-        <input type="submit" value="Add" />
-      </form>
-      <table style={{ border: "1px solid black" }}>
-        <thead>
-          <tr>
-            <th>Name (brand)</th>
-            <th>Serving size</th>
-            <th>Calories</th>
-          </tr>
-        </thead>
+        <form onSubmit={handleAddItem}>
+          <select name="foodItem">
+            {
+              (result === '')
+                ?
+                <option value="0">Food dropdown here...</option>
+                :
+                result.hits.map((item) => {
+                  const { fields: { item_id, item_name, brand_name, nf_calories } } = item;
+                  return (<option key={item_id} value={item_id}>{item_name}, {brand_name}, {nf_calories} calories</option>);
+                })
+            }
+          </select>
+          <Button type="submit" value="Add" variant="contained" color="primary"><AddIcon /></Button>
+        </form>
+      </Paper>
 
-        <tbody>
-          {foodLog === [] ? <tr><td ></td><td /><td /></tr> : foodLog.map((food, index) => {
-            const { item_id, item_name, brand_name, nf_calories, nf_serving_size_qty, nf_serving_size_unit } = food;
-            return (
-              <tr key={item_id} >
-                <td>{item_name} ({brand_name})</td>
-                <td>
-                  <input
-                    type="number"
-                    value={nf_serving_size_qty}
-                    onChange={(e) => {
-                      if (e.target.value < 0) {
-                        e.target.value = 0;
-                      } else {
-                        changeQuantity(index, e.target.value);
-                      }
-                    }}
-                  />
-                  {nf_serving_size_unit}
-                </td>
-                <td>{(nf_calories * nf_serving_size_qty).toFixed(0)} calories</td>
-                <td><button onClick={() => removeFood(index)}>X</button></td>
-              </tr>
-            );
-          })}
-        </tbody>
-
-        <tfoot>
-          <tr>
-            <td></td>
-            <td><b>Total</b></td>
-            <td><b>{totalCalories.toFixed(0)}</b> calories</td>
-          </tr>
-        </tfoot>
-      </table>
+      <h2><u>Food Log</u></h2>
+      <Paper className={classes.table}>
+        <Table
+          foodLog={foodLog}
+          totalCalories={totalCalories}
+          removeFood={removeFood}
+          changeQuantity={changeQuantity}
+        />
+      </Paper>
     </div>
   );
 };
 
-export default App;
+// Custom Styles 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    margin: 10,
+    display: "flex",
+    justifyContent: "center",
+    minWidth: 500,
+  },
+  paper: {
+    margin: 10,
+    padding: theme.spacing(3, 2),
+    minWidth: 300,
+  },
+
+  table: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexFlow: 'column wrap',
+    margin: 10,
+    padding: theme.spacing(3, 2),
+    minWidth: 400,
+  }
+}
+));
+
+// Grid Rendering
+const PageRender = () => {
+  const classes = useStyles();
+  return (
+    <Grid container>
+      <Grid item xs={12} sm={2} />
+      <Grid item xs={12} sm={8} className={classes.root}>
+        <App />
+      </Grid>
+      <Grid item xs={12} sm={2} />
+    </Grid>
+  );
+};
+
+export default PageRender;
