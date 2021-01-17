@@ -4,9 +4,7 @@ import './index.css';
 import PageRender from './App';
 
 ReactDOM.render(
-
-  <PageRender />
-  ,
+  <PageRender />,
   document.getElementById('root')
 );
 

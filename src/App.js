@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import Table from './components/Table';
+import TableRender from './components/Table';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -10,16 +10,15 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { ListItemText } from '@material-ui/core';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
 import AddIcon from "@material-ui/icons/Add";
-import Input from '@material-ui/core/Input';
+
+
 const App = () => {
   const classes = useStyles();
 
   const [query, setQuery] = useState('');
   const [result, setResult] = useState('');
+  const [selectedFood, setSelectedFood] = useState('');
   const [foodLog, setFoodLog] = useState(JSON.parse(localStorage.getItem('foodLog')) || []);
   const [totalCalories, setTotalCalories] = useState(0);
 
@@ -60,7 +59,7 @@ const App = () => {
 
   const handleAddItem = (e) => {
     e.preventDefault();
-    let newItem = result.hits.filter((item) => item.fields.item_id === e.target.foodItem.value);
+    let newItem = result.hits.filter((item) => item.fields.item_id === selectedFood);
     if (!foodLog) {
       setFoodLog([newItem[0].fields]);
     } else {
@@ -86,33 +85,50 @@ const App = () => {
     <div>
       <h1>Nutrition App</h1>
       <Paper elevation={2} className={classes.paper}>
-        <form className={classes.inputForm}>
-          <TextField id="foodQuery" label="Food" value={query} onChange={(e) => { setQuery(e.target.value); }} />
+        <form className={classes.formControl}>
+          <TextField className={classes.inputs} id="foodQuery" label="Food" value={query} onChange={(e) => { setQuery(e.target.value); }} />
           {/* <input type="text" value={query} onChange={(e) => { setQuery(e.target.value); }} placeholder="Enter food" /> */}
           <Button variant="contained" color="primary" onClick={handleSubmit}><SearchIcon /></Button>
           {/* <button type="submit" onClick={handleSubmit}>Submit</button> */}
         </form>
 
-        <form onSubmit={handleAddItem}>
-          <select name="foodItem">
-            {
-              (result === '')
-                ?
-                <option value="0">Food dropdown here...</option>
-                :
-                result.hits.map((item) => {
-                  const { fields: { item_id, item_name, brand_name, nf_calories } } = item;
-                  return (<option key={item_id} value={item_id}>{item_name}, {brand_name}, {nf_calories} calories</option>);
-                })
-            }
-          </select>
-          <Button type="submit" value="Add" variant="contained" color="primary"><AddIcon /></Button>
-        </form>
+        <br />
+
+        {
+          result === ''
+            ?
+            <div></div>
+            :
+            <form onSubmit={handleAddItem} className={classes.formControl}>
+
+              <InputLabel id="demo-simple-select-label">Select</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedFood}
+                onChange={(e) => setSelectedFood(e.target.value)}
+                className={classes.inputs}
+              >
+                {
+                  (result === '')
+                    ?
+                    <MenuItem value='0'>None</MenuItem>
+                    :
+                    result.hits.map((item) => {
+                      const { fields: { item_id, item_name, brand_name, nf_calories } } = item;
+                      return (<MenuItem key={item_id} value={item_id}>{item_name}, {brand_name}, {nf_calories} calories</MenuItem>);
+                    })
+                }
+              </Select>
+              <Button type="submit" value="Add" variant="contained" color="primary"><AddIcon /></Button>
+            </form>
+        }
+
       </Paper>
 
-      <h2><u>Food Log</u></h2>
+      <h2>Food Log</h2>
       <Paper className={classes.table}>
-        <Table
+        <TableRender
           foodLog={foodLog}
           totalCalories={totalCalories}
           removeFood={removeFood}
@@ -132,6 +148,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 500,
   },
   paper: {
+    display: 'flex',
+    justifyContent: 'center',
     margin: 10,
     padding: theme.spacing(3, 2),
     minWidth: 300,
@@ -144,6 +162,12 @@ const useStyles = makeStyles((theme) => ({
     margin: 10,
     padding: theme.spacing(3, 2),
     minWidth: 400,
+  },
+  formControl: {
+    margin: 10,
+  },
+  inputs: {
+    minWidth: 200,
   }
 }
 ));

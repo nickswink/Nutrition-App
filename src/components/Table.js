@@ -1,23 +1,29 @@
+import { TableFooter } from '@material-ui/core';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import React from 'react';
 
-export default function Table({ foodLog, totalCalories, removeFood, changeQuantity }) {
+export default function TableRender({ foodLog, totalCalories, removeFood, changeQuantity }) {
     return (
-        <table style={{ border: "1px solid black" }}>
-            <thead>
-                <tr>
-                    <th>Name (brand)</th>
-                    <th>Serving size</th>
-                    <th>Calories</th>
-                </tr>
-            </thead>
 
-            <tbody>
-                {foodLog === [] ? <tr><td ></td><td /><td /></tr> : foodLog.map((food, index) => {
+        <Table>
+            <TableHead>
+                <TableRow>
+                    <TableCell>Name (brand)</TableCell>
+                    <TableCell>Serving size</TableCell>
+                    <TableCell>Calories</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {foodLog === [] ? <TableRow><TableCell ></TableCell><TableCell /><TableCell /></TableRow> : foodLog.map((food, index) => {
                     const { item_id, item_name, brand_name, nf_calories, nf_serving_size_qty, nf_serving_size_unit } = food;
                     return (
-                        <tr key={item_id} >
-                            <td>{item_name} ({brand_name})</td>
-                            <td>
+                        <TableRow key={item_id} >
+                            <TableCell>{item_name} ({brand_name})</TableCell>
+                            <TableCell>
                                 <input
                                     type="number"
                                     value={nf_serving_size_qty}
@@ -30,21 +36,20 @@ export default function Table({ foodLog, totalCalories, removeFood, changeQuanti
                                     }}
                                 />
                                 {nf_serving_size_unit}
-                            </td>
-                            <td>{(nf_calories * nf_serving_size_qty).toFixed(0)} calories</td>
-                            <td><button onClick={() => removeFood(index)}>X</button></td>
-                        </tr>
+                            </TableCell>
+                            <TableCell>{(nf_calories * nf_serving_size_qty).toFixed(0)} calories</TableCell>
+                            <TableCell><button onClick={() => removeFood(index)}>X</button></TableCell>
+                        </TableRow>
                     );
                 })}
-            </tbody>
-
-            <tfoot>
-                <tr>
-                    <td></td>
-                    <td><b>Total</b></td>
-                    <td><b>{totalCalories.toFixed(0)}</b> calories</td>
-                </tr>
-            </tfoot>
-        </table>
+            </TableBody>
+            <TableFooter>
+                <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell><b>Total</b></TableCell>
+                    <TableCell><b>{totalCalories.toFixed(0)}</b> calories</TableCell>
+                </TableRow>
+            </TableFooter>
+        </Table>
     );
 };
