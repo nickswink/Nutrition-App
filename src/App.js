@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddIcon from "@material-ui/icons/Add";
-
+import Typography from '@material-ui/core/Typography';
 
 const App = () => {
   const classes = useStyles();
@@ -45,7 +45,7 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (query === '') {
-      alert('type something');
+      alert('*Field required: Food');
     } else {
       // fetch data
       axios.request(options).then(function (response) {
@@ -83,7 +83,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Nutrition App</h1>
+      <Typography variant='h3'>Nutrition App</Typography>
       <Paper elevation={2} className={classes.paper}>
         <form className={classes.formControl}>
           <TextField className={classes.inputs} id="foodQuery" label="Food" value={query} onChange={(e) => { setQuery(e.target.value); }} />
@@ -107,7 +107,7 @@ const App = () => {
                 id="demo-simple-select"
                 value={selectedFood}
                 onChange={(e) => setSelectedFood(e.target.value)}
-                className={classes.inputs}
+                className={classes.selectOverflow}
               >
                 {
                   (result === '')
@@ -126,7 +126,7 @@ const App = () => {
 
       </Paper>
 
-      <h2>Food Log</h2>
+      <Typography variant="h4">Food Log</Typography>
       <Paper className={classes.table}>
         <TableRender
           foodLog={foodLog}
@@ -153,6 +153,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 10,
     padding: theme.spacing(3, 2),
     minWidth: 300,
+    backgroundColor: '#C6F5FF',
   },
 
   table: {
@@ -162,12 +163,16 @@ const useStyles = makeStyles((theme) => ({
     margin: 10,
     padding: theme.spacing(3, 2),
     minWidth: 400,
+    backgroundColor: '#C6F5FF',
   },
   formControl: {
     margin: 10,
   },
   inputs: {
     minWidth: 200,
+  },
+  selectOverflow: {
+    width: 100,
   }
 }
 ));

@@ -4,11 +4,12 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 import React from 'react';
 
 export default function TableRender({ foodLog, totalCalories, removeFood, changeQuantity }) {
     return (
-
         <Table>
             <TableHead>
                 <TableRow>
@@ -38,7 +39,7 @@ export default function TableRender({ foodLog, totalCalories, removeFood, change
                                 {nf_serving_size_unit}
                             </TableCell>
                             <TableCell>{(nf_calories * nf_serving_size_qty).toFixed(0)} calories</TableCell>
-                            <TableCell><button onClick={() => removeFood(index)}>X</button></TableCell>
+                            <TableCell><Button style={{ color: 'red' }} onClick={() => removeFood(index)}><DeleteIcon /></Button></TableCell>
                         </TableRow>
                     );
                 })}
